@@ -40,18 +40,18 @@ class SentiNa(nn.Module):
         #final shape of the output is (B, T, model_dim)
         #average across tokens
 
-        # mask = attention_mask.unsqueeze(-1).float()
+        mask = attention_mask.unsqueeze(-1).float()
 
-        # x = x * mask
+        x = x * mask
 
-        # sum_x = torch.sum(x, dim = 1)
+        sum_x = torch.sum(x, dim = 1)
 
-        # token_counts = torch.clamp(mask.sum(dim=-2), min=1e-9)
+        token_counts = torch.clamp(mask.sum(dim=-2), min=1e-9)
 
-        # x = sum_x/token_counts
+        x = sum_x/token_counts
 
 
 
-        x = self.classifier(x[:, 0, :])
+        # x = self.classifier(x[:, 0, :])
 
         return x
