@@ -7,7 +7,6 @@ class ValidationLossMonitor:
 
     def is_min_loss(self, loss):
         if loss < self.min_loss:
-            self.min_loss = loss
             return True
 
         return False
