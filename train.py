@@ -1,6 +1,6 @@
 from datasets import load_dataset, DatasetDict, Dataset
 from torch.utils.data import DataLoader
-from transformers import AutoTokenizer
+from transformers import PreTrainedTokenizerFast
 from model.SentiNa import SentiNa
 import torch.nn as nn
 from torch.optim import AdamW
@@ -19,16 +19,15 @@ def get_args():
     parser.add_argument("--total_epochs", type=int, default=100)
     parser.add_argument("--num_encoders", type=int, default=5)
     parser.add_argument("--num_heads", type=int, default=8)
-    parser.add_argument("--model_dim", type=int, default=512)
-    parser.add_argument("--max_len", type=int, default=512)
-    parser.add_argument("--train_batch_size", type=int, default=256)
-    parser.add_argument("--validation_batch_size", type=int, default=512)
+    parser.add_argument("--model_dim", type=int, default=256)
+    parser.add_argument("--max_len", type=int, default=128)
+    parser.add_argument("--train_batch_size", type=int, default=64)
+    parser.add_argument("--validation_batch_size", type=int, default=64)
     parser.add_argument("--train_stop_patience", type=int, default=10)
     parser.add_argument("--classification_threshold", type=float, default=0.5)
     parser.add_argument("--lr_scheduler_patience", type=int, default=5)
     parser.add_argument("--lr_scheduler_cooldown", type=int, default=5)
-    parser.add_argument("--initial_lr", type=float, default=5e-5)
-    parser.add_argument("--model_id", type=str, default="google/gemma-3-1b-it")
+    parser.add_argument("--initial_lr", type=float, default=2e-5)
     return parser.parse_args()
 
 ds = load_dataset("stanfordnlp/sst2")
@@ -49,7 +48,6 @@ classification_threshold = args.classification_threshold
 lr_scheduler_patience = args.lr_scheduler_patience
 lr_scheduler_cooldown = args.lr_scheduler_cooldown
 initial_lr = args.initial_lr
-model_id = args.model_id
 
 def get_device():
     """Returns the most powerful available device."""
@@ -71,12 +69,15 @@ def get_device():
 # Usage
 device = get_device()
 
-tokenizer = AutoTokenizer.from_pretrained(model_id)
+tokenizer = PreTrainedTokenizerFast(tokenizer_file = 'tokenizer/json/ss2_tokenizer.json')
+tokenizer.pad_token = "[PAD]"
 
 def tokenize_function(examples):
     return tokenizer(examples['sentence'], padding='max_length', truncation = True, max_length = max_len)
 
 tokenized_ds = ds.map(tokenize_function, batched=True)
+
+print(tokenized_ds)
 tokenized_ds.set_format(type='torch', columns=['input_ids', 'attention_mask', 'label'])
 
 train_dataloader = DataLoader(tokenized_ds['train'], shuffle=True, batch_size=train_batch_size)
@@ -109,6 +110,8 @@ print(f"Total params: {total_params//1000000}M")
 
 validation_monitor = ValidationLossMonitor(patience=train_stop_patience)
 metrics_monitor = MetricsMonitor(classification_threshold)
+
+
 
 for epoch in range(total_epochs):
     total_loss = 0
