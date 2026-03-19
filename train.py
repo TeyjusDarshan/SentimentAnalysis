@@ -7,7 +7,6 @@ from torch.optim import AdamW
 import torch
 from alive_progress import alive_bar
 from torch import vmap
-from datasets import Features, Value
 import torch.optim as optim
 from monitors.metric_monitor import MetricsMonitor
 from monitors.validation_monitor import ValidationLossMonitor
