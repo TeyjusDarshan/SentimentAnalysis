@@ -21,7 +21,7 @@ def get_args():
     parser.add_argument("--num_heads", type=int, default=8)
     parser.add_argument("--model_dim", type=int, default=256)
     parser.add_argument("--max_len", type=int, default=128)
-    parser.add_argument("--train_batch_size", type=int, default=64)
+    parser.add_argument("--train_batch_size", type=int, default=128)
     parser.add_argument("--validation_batch_size", type=int, default=64)
     parser.add_argument("--train_stop_patience", type=int, default=10)
     parser.add_argument("--classification_threshold", type=float, default=0.5)
@@ -77,7 +77,6 @@ def tokenize_function(examples):
 
 tokenized_ds = ds.map(tokenize_function, batched=True)
 
-print(tokenized_ds)
 tokenized_ds.set_format(type='torch', columns=['input_ids', 'attention_mask', 'label'])
 
 train_dataloader = DataLoader(tokenized_ds['train'], shuffle=True, batch_size=train_batch_size)

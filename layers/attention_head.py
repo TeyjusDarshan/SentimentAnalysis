@@ -33,8 +33,9 @@ class AttentionHead(nn.Module):
         if attention_mask is not None:
             mask = attention_mask.unsqueeze(1)
             attention = attention.masked_fill(mask == 0, float('-inf'))
+        
 
-        attention_probs = torch.softmax(attention, dim = 1)
+        attention_probs = torch.softmax(attention, dim = -1)
 
         output = attention_probs @ V #shape (B, T, Oc)
         
