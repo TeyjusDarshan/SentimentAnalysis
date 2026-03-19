@@ -12,7 +12,7 @@ class SentiNa(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(model_dim, model_dim//2), 
             nn.ReLU(),
-            nn.Linear(model_dim//2, 2)
+            nn.Linear(model_dim//2, 1)
         )
 
         #scaling

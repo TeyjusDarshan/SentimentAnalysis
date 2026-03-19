@@ -1,0 +1,55 @@
+# --- Operating System Files ---
+.DS_Store
+Thumbs.db
+*.swp
+.AppleDouble
+.LSOverride
+
+# --- Python Files ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Virtual Environments ---
+venv/
+.venv/
+env/
+.env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# --- Visual Studio / VS Code ---
+.vscode/
+.history/
+*.code-workspace
+.vs/
+[Bb]in/
+[Oo]bj/
+out/
+
+# --- Model Checkpoints & Large Data ---
+# Since you are training SentiNa/TeDGPT
+*.pth
+*.bin
+*.model
+checkpoint.pth
+data/
