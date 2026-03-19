@@ -12,9 +12,11 @@ class SentiNa(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(model_dim, 1)
         )
-        self.dropout = nn.Dropout(0.3)
+        self.dropout = nn.Dropout(0.1)
 
         #scaling
+        nn.init.normal_(self.embedding.weight, 0, 0.02)
+        nn.init.normal(self.pos_embedding.weight, 0, 0.02)
         for layer in self.classifier:
             if isinstance(layer, nn.Linear):
                 nn.init.normal_(layer.weight, 0, 0.02)

@@ -22,11 +22,17 @@ class MetricsMonitor:
         precision = self.calculate_precision()
         recall = self.calculate_recall()
         f1 = self.calculate_f1(precision, recall)
+        accuracy = self.calculate_accuracy()
 
-        print(f" Precision : {precision} ; Recall: {recall} ; F1 score: {f1}")
+        print(f" Precision : {precision} ; Recall: {recall} ; F1 score: {f1} ; Accuracy: {accuracy}")
 
         self.clear_vals()
     
+    def calcualte_accuracy(self):
+        total = self.true_negatives + self.true_positives + self.false_positives + self.false_negatives
+        correct = self.true_positives + self.true_negatives
+
+        return correct/total
 
     def calculate_precision(self):
         denom = (self.true_positives + self.false_positives)
