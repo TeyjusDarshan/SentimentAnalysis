@@ -10,7 +10,7 @@ class MultiheadAttention(nn.Module):
         self.attention_heads = nn.ModuleList([AttentionHead(model_embed_size, model_embed_size//num_heads) for i in range(num_heads)])
         self.projection_layer = nn.Linear(model_embed_size, model_embed_size)
         self.ln = nn.LayerNorm(model_embed_size)
-        self.dropout = nn.Dropout(0.3)
+        self.dropout = nn.Dropout(0.1)
 
         #scaling 
         nn.init.normal_(self.projection_layer.weight, 0, 0.02)
