@@ -10,10 +10,9 @@ class SentiNa(nn.Module):
         self.pos_embedding = nn.Embedding(max_len, model_dim)
         self.encoders = nn.ModuleList([Encoder(num_heads, model_dim) for i in range(num_encoder)])
         self.classifier = nn.Sequential(
-            nn.Linear(model_dim, model_dim//2), 
-            nn.ReLU(),
-            nn.Linear(model_dim//2, 1)
+            nn.Linear(model_dim, 1)
         )
+        self.dropout = nn.Dropout(0.1)
 
         #scaling
         for layer in self.classifier:
@@ -30,6 +29,8 @@ class SentiNa(nn.Module):
         pos_enc = self.pos_embedding(positions)
 
         x = x + pos_enc
+
+        x = self.dropout(x)
 
         for encoder in self.encoders:
             x = encoder(x, attention_mask)

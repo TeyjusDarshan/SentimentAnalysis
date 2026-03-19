@@ -10,6 +10,7 @@ class AttentionHead(nn.Module):
         self.kW = nn.Linear(model_embed_size, output_embed_size)
         self.vW = nn.Linear(model_embed_size, output_embed_size)
         self.output_embed_size = output_embed_size
+        self.dropout = nn.Dropout(0.1)
 
         #scaling of weights
         nn.init.normal_(self.qW.weight, mean = 0.0, std = 0.02)
@@ -36,6 +37,7 @@ class AttentionHead(nn.Module):
         
 
         attention_probs = torch.softmax(attention, dim = -1)
+        attention_probs = self.dropout(attention_probs)
 
         output = attention_probs @ V #shape (B, T, Oc)
         

@@ -10,6 +10,7 @@ class MultiheadAttention(nn.Module):
         self.attention_heads = nn.ModuleList([AttentionHead(model_embed_size, model_embed_size//num_heads) for i in range(num_heads)])
         self.projection_layer = nn.Linear(model_embed_size, model_embed_size)
         self.ln = nn.LayerNorm(model_embed_size)
+        self.dropout = nn.Dropout(0.1)
 
         #scaling 
         nn.init.normal_(self.projection_layer.weight, 0, 0.02)
@@ -20,6 +21,7 @@ class MultiheadAttention(nn.Module):
         head_outputs = [h(norm_x, attention_mask) for h in self.attention_heads]
         out = torch.cat(head_outputs, dim = -1) #shape (B, T, model_embed_size)
         projection = self.projection_layer(out)
+        projection = self.dropout(projection)
         residual_output =  x + projection
         return residual_output
 

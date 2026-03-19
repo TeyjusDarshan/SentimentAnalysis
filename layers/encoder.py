@@ -9,8 +9,10 @@ class Encoder(nn.Module):
         self.mlh = MultiheadAttention(num_heads, model_dim)
         self.ff = nn.Sequential(
             nn.Linear(model_dim, 4*model_dim),
-            nn.ReLU(),
-            nn.Linear(4 * model_dim, model_dim)
+            nn.GELU(),
+            nn.Dropout(),
+            nn.Linear(4 * model_dim, model_dim),
+            nn.Dropout(0.1)
         )
 
         self.ln2 = nn.LayerNorm(model_dim)
