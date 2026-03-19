@@ -31,13 +31,26 @@ class SentiNa(nn.Module):
 
         x = x + pos_enc
 
+
+
         for encoder in self.encoders:
-            x = encoder(x)
+            x = encoder(x, attention_mask)
+        
+
         
         #final shape of the output is (B, T, model_dim)
         #average across tokens
 
-        x = torch.mean(x, dim = -2) # output (B, model_dim)
+        mask = attention_mask.unsqueeze(-1).float()
+
+        x = x * mask
+
+        sum_x = torch.sum(x, dim = 1)
+
+        token_counts = torch.clamp(mask.sum(dim=-2), min=1e-9)
+
+        x = sum_x/token_counts
+
 
         x = self.classifier(x)
 

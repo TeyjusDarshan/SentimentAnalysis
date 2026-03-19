@@ -15,9 +15,9 @@ class MultiheadAttention(nn.Module):
         nn.init.normal_(self.projection_layer.weight, 0, 0.02)
         nn.init.constant_(self.projection_layer.bias, 0)
     
-    def forward(self, x):
+    def forward(self, x, attention_mask = None):
         norm_x = self.ln(x)
-        head_outputs = [h(norm_x) for h in self.attention_heads]
+        head_outputs = [h(norm_x, attention_mask) for h in self.attention_heads]
         out = torch.cat(head_outputs, dim = -1) #shape (B, T, model_embed_size)
         projection = self.projection_layer(out)
         residual_output =  x + projection

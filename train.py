@@ -27,7 +27,7 @@ def get_args():
     parser.add_argument("--classification_threshold", type=float, default=0.5)
     parser.add_argument("--lr_scheduler_patience", type=int, default=5)
     parser.add_argument("--lr_scheduler_cooldown", type=int, default=5)
-    parser.add_argument("--initial_lr", type=float, default=2e-5)
+    parser.add_argument("--initial_lr", type=float, default=1e-4)
     return parser.parse_args()
 
 ds = load_dataset("stanfordnlp/sst2")

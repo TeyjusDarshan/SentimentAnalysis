@@ -21,8 +21,8 @@ class Encoder(nn.Module):
                 nn.init.normal_(layer.weight, 0, 0.02)
                 nn.init.constant_(layer.bias, 0)
     
-    def forward(self, x):
-        x = self.mlh(x)
+    def forward(self, x, attention_mask = None):
+        x = self.mlh(x, attention_mask)
 
         ln_res = self.ln2(x)
         y = self.ff(ln_res)
