@@ -10,7 +10,7 @@ class AttentionHead(nn.Module):
         self.kW = nn.Linear(model_embed_size, output_embed_size)
         self.vW = nn.Linear(model_embed_size, output_embed_size)
         self.output_embed_size = output_embed_size
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(0.3)
 
         #scaling of weights
         nn.init.normal_(self.qW.weight, mean = 0.0, std = 0.02)

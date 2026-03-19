@@ -10,9 +10,9 @@ class Encoder(nn.Module):
         self.ff = nn.Sequential(
             nn.Linear(model_dim, 4*model_dim),
             nn.GELU(),
-            nn.Dropout(),
+            nn.Dropout(0.3),
             nn.Linear(4 * model_dim, model_dim),
-            nn.Dropout(0.1)
+            nn.Dropout(0.3)
         )
 
         self.ln2 = nn.LayerNorm(model_dim)

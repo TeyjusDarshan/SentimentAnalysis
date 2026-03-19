@@ -27,7 +27,7 @@ def get_args():
     parser.add_argument("--classification_threshold", type=float, default=0.5)
     parser.add_argument("--lr_scheduler_patience", type=int, default=5)
     parser.add_argument("--lr_scheduler_cooldown", type=int, default=5)
-    parser.add_argument("--initial_lr", type=float, default=1e-4)
+    parser.add_argument("--initial_lr", type=float, default=5e-4)
     return parser.parse_args()
 
 ds = load_dataset("stanfordnlp/sst2")
@@ -92,7 +92,7 @@ model = SentiNa(
 ).to(device=device)
 
 criterion = nn.BCEWithLogitsLoss()
-optimizer = AdamW(model.parameters(), lr=initial_lr)
+optimizer = AdamW(model.parameters(), lr=initial_lr, weight_decay=0.01)
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(
     optimizer=optimizer, 
     mode='min',

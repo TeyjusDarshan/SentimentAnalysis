@@ -12,7 +12,7 @@ class SentiNa(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(model_dim, 1)
         )
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(0.3)
 
         #scaling
         for layer in self.classifier:
