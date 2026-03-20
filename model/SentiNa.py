@@ -1,12 +1,26 @@
 from layers.encoder import Encoder
 import torch
 from torch import nn
+import torch.nn.functional as F
 
 
 class SentiNa(nn.Module):
     def __init__(self, vocab_size, num_encoder, num_heads, model_dim, max_len):
         super().__init__()
-        self.embedding = nn.Embedding(vocab_size, model_dim)
+
+
+        #scale the weights from word2vec
+        weights = torch.load("weights/embedding_weights.pt", weights_only=True)
+        eps = 1e-8
+        mu = weights.mean()
+        sigma = weights.std()
+        self.ln_embed = nn.LayerNorm(model_dim)
+        # Scale to a standard deviation of 0.1 (common for Transformer stability)
+        normalized_weights = (weights - mu) / (sigma + eps) * 0.02
+
+
+        self.embedding = nn.Embedding.from_pretrained(normalized_weights, freeze=False, padding_idx=0)
+
         self.pos_embedding = nn.Embedding(max_len, model_dim)
         self.encoders = nn.ModuleList([Encoder(num_heads, model_dim) for i in range(num_encoder)])
         self.classifier = nn.Sequential(
@@ -15,7 +29,7 @@ class SentiNa(nn.Module):
         self.dropout = nn.Dropout(0.1)
 
         #scaling
-        nn.init.normal_(self.embedding.weight, 0, 0.02)
+        # nn.init.normal_(self.embedding.weight, 0, 0.02)
         nn.init.normal_(self.pos_embedding.weight, 0, 0.02)
         for layer in self.classifier:
             if isinstance(layer, nn.Linear):
@@ -31,6 +45,10 @@ class SentiNa(nn.Module):
         pos_enc = self.pos_embedding(positions)
 
         x = x + pos_enc
+
+        x = self.ln_embed(x)
+
+        
 
         x = self.dropout(x)
 

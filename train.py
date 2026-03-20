@@ -10,6 +10,7 @@ from torch import vmap
 import torch.optim as optim
 from monitors.metric_monitor import MetricsMonitor
 from monitors.validation_monitor import ValidationLossMonitor
+from tokenizer.tokenizers.custom_word2vec_tokenizer import CustomWord2VecTokenizer
 import argparse
 
 
@@ -19,7 +20,7 @@ def get_args():
     parser.add_argument("--total_epochs", type=int, default=100)
     parser.add_argument("--num_encoders", type=int, default=2)
     parser.add_argument("--num_heads", type=int, default=4)
-    parser.add_argument("--model_dim", type=int, default=128)
+    parser.add_argument("--model_dim", type=int, default=300)
     parser.add_argument("--max_len", type=int, default=64)
     parser.add_argument("--train_batch_size", type=int, default=64)
     parser.add_argument("--validation_batch_size", type=int, default=64)
@@ -69,15 +70,57 @@ def get_device():
 # Usage
 device = get_device()
 
-tokenizer = PreTrainedTokenizerFast(tokenizer_file = 'tokenizer/json/ss2_tokenizer.json')
-tokenizer.pad_token = "[PAD]"
+# tokenizer = PreTrainedTokenizerFast(tokenizer_file = 'tokenizer/json/ss2_tokenizer.json')
+# tokenizer.pad_token = "[PAD]"
 
-def tokenize_function(examples):
-    return tokenizer(examples['sentence'], padding='max_length', truncation = True, max_length = max_len)
+# def tokenize_function(examples):
+#     return tokenizer(examples['sentence'], padding='max_length', truncation = True, max_length = max_len)
 
-tokenized_ds = ds.map(tokenize_function, batched=True)
+# tokenized_ds = ds.map(tokenize_function, batched=True)
 
+# tokenized_ds.set_format(type='torch', columns=['input_ids', 'attention_mask', 'label'])
+
+
+tokenizer = CustomWord2VecTokenizer("tokenizer/json/word2vec_tokenizer.json", max_len=max_len)
+
+ds = ds.filter(tokenizer.filter)
+
+for sentence in ds['train']['sentence']:
+    tokenizer.tokenize({'sentence' : [sentence]})
+
+
+print("end of check")
+
+tokenized_ds = ds.map(tokenizer.tokenize, batched=True)
 tokenized_ds.set_format(type='torch', columns=['input_ids', 'attention_mask', 'label'])
+
+print(tokenized_ds)
+
+
+# weights = torch.load("weights/embedding_weights.pt", weights_only=True)
+# embedding = nn.Embedding.from_pretrained(weights, freeze=False, padding_idx=0)
+
+# train_dataloader = DataLoader(tokenized_ds['train'], shuffle=True, batch_size=train_batch_size)
+
+
+# model = SentiNa(
+#     tokenizer.vocab_size,
+#     num_encoder=num_encoders, 
+#     num_heads=num_heads, 
+#     model_dim=model_dim, 
+#     max_len=max_len
+# ).to(device=device)
+
+# batch = next(iter(train_dataloader))
+
+# outputs = model(batch['input_ids'].to(device), batch['attention_mask'].to(device))
+# metrics_monitor = MetricsMonitor(classification_threshold)
+
+# metrics_monitor.accumulate_metrics(outputs, batch['label'].to(device))
+# metrics_monitor.print_metrics()
+
+
+# print(outputs)
 
 train_dataloader = DataLoader(tokenized_ds['train'], shuffle=True, batch_size=train_batch_size)
 val_dataloader = DataLoader(tokenized_ds['validation'], shuffle = True, batch_size=validation_batch_size)
