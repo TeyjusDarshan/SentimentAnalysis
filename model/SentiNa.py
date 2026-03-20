@@ -16,7 +16,7 @@ class SentiNa(nn.Module):
 
         #scaling
         nn.init.normal_(self.embedding.weight, 0, 0.02)
-        nn.init.normal(self.pos_embedding.weight, 0, 0.02)
+        nn.init.normal_(self.pos_embedding.weight, 0, 0.02)
         for layer in self.classifier:
             if isinstance(layer, nn.Linear):
                 nn.init.normal_(layer.weight, 0, 0.02)
@@ -50,8 +50,6 @@ class SentiNa(nn.Module):
 
         x = sum_x/token_counts
 
-
-
-        # x = self.classifier(x[:, 0, :])
+        x = self.classifier(x)
 
         return x
