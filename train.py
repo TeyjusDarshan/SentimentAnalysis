@@ -127,7 +127,7 @@ for epoch in range(total_epochs):
             outputs = model(input_ids, attention_mask)
 
             #backprop
-            loss = criterion(outputs, labels.float())
+            loss = criterion(outputs, labels)
             total_loss += loss * input_ids.size(0)
 
             loss.backward()
@@ -151,7 +151,7 @@ for epoch in range(total_epochs):
             outputs = model(input_ids, attention_mask)
 
             #backprop
-            loss = criterion(outputs, labels.float())
+            loss = criterion(outputs, labels)
             total_val_loss += loss * input_ids.size(0)
             metrics_monitor.accumulate_metrics(outputs, labels)
 
