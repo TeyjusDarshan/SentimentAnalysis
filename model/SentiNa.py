@@ -10,7 +10,7 @@ class SentiNa(nn.Module):
         self.pos_embedding = nn.Embedding(max_len, model_dim)
         self.encoders = nn.ModuleList([Encoder(num_heads, model_dim) for i in range(num_encoder)])
         self.classifier = nn.Sequential(
-            nn.Linear(model_dim, 1)
+            nn.Linear(model_dim, 2)
         )
         self.dropout = nn.Dropout(0.1)
 

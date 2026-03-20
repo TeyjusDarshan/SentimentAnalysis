@@ -91,7 +91,7 @@ model = SentiNa(
     max_len=max_len
 ).to(device=device)
 
-criterion = nn.BCEWithLogitsLoss()
+criterion = nn.CrossEntropyLoss()
 optimizer = AdamW(model.parameters(), lr=initial_lr, weight_decay=0.01)
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(
     optimizer=optimizer, 
@@ -127,7 +127,7 @@ for epoch in range(total_epochs):
             outputs = model(input_ids, attention_mask)
 
             #backprop
-            loss = criterion(outputs.view(-1), labels.float())
+            loss = criterion(outputs, labels.float())
             total_loss += loss * input_ids.size(0)
 
             loss.backward()
@@ -151,7 +151,7 @@ for epoch in range(total_epochs):
             outputs = model(input_ids, attention_mask)
 
             #backprop
-            loss = criterion(outputs.view(-1), labels.float())
+            loss = criterion(outputs, labels.float())
             total_val_loss += loss * input_ids.size(0)
             metrics_monitor.accumulate_metrics(outputs, labels)
 

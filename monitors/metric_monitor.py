@@ -9,8 +9,9 @@ class MetricsMonitor:
         self.threshold = threshold
 
     def accumulate_metrics(self, logits, target):
-        probs = torch.sigmoid(logits)
-        preds = (probs > self.threshold).long()
+        #change the logic to use softmax
+        #shape of logits is (B, 2)
+        preds = torch.argmax(logits, dim = 1)
         target = target.view(-1).long()
 
         self.true_positives += ((preds == 1) & (target == 1)).sum().item()
@@ -22,7 +23,7 @@ class MetricsMonitor:
         precision = self.calculate_precision()
         recall = self.calculate_recall()
         f1 = self.calculate_f1(precision, recall)
-        accuracy = self.calculate_accuracy()
+        accuracy = self.calcualte_accuracy()
 
         print(f" Precision : {precision} ; Recall: {recall} ; F1 score: {f1} ; Accuracy: {accuracy}")
 
